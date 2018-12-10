@@ -1,1 +1,1 @@
-# VefLokaverkefni
+# https://mfp-lokaverkefni.herokuapp.com/
