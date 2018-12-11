@@ -1,60 +1,79 @@
-<html>
-<?php require_once('include/head.php'); ?>
-  <body>
-
-    <div class="container">
-
-      <form class="form-signin" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-        <h2 class="form-signin-heading">Please sign in</h2>
-        <label for="inputName" class="sr-only">Email address</label>
-        <input type="name" id="inputName" class="form-control" placeholder="Username" name="inputName" required autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="inputPassword" required>
-        <div class="checkbox">
-            <label>
-                Don't have an account? 
-          <a href="register.php" class="link">Register here</a>
-            </label>
-        </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit" name="login">Sign in</button>
-        
-      </form>
-
-    </div> <!-- /container -->
-
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
-  </body>
-</html>
-<?php
-require_once('include/dbConn.php');
-$Connection = DBconnectUsers('read');
-if(isset($_POST['login'])){
-    $user = $_POST['inputName'];
-    $userpass = $_POST['inputPassword'];
-    $checkUser = null;
-    $sql = "SELECT id, user, userPass FROM users WHERE user='$user'";
-    $result = $Connection->query($sql);
-    foreach ($result as $check){
-        $checkUser = $check['user'];
-        $hash = $check['userPass'];
+<?php require_once("includes/menu.php");?>
+    <!--display table-->
+    <?php
+    include 'DBconnect/connection.php';
+    $DBconnect = DBconnectProjects();
+    $getData = "SELECT id, userName, projectName, projectDescription, projectDeadline FROM projects WHERE userName='$userName' AND projectStatus=true";
+    $res = $DBconnect->query($getData);
+    if(isset($_POST['add'])){   
+    $stmt = $DBconnect->prepare("INSERT INTO projects(userName, projectName, projectDescription, projectDeadline, projectStatus)
+    VALUES(:userName, :projectName, :projectDesc, :projectDeadline, :projectStatus)");
+    $stmt->bindParam(':userName', $userName);
+    $stmt->bindParam(':projectName', $projectName);
+    $stmt->bindParam(':projectDesc', $projectDesc);
+    $stmt->bindParam(':projectDeadline', $projectDeadline);
+    $stmt->bindParam(':projectStatus', $status, PDO::PARAM_BOOL);
+    
+    $projectName = $_POST['projectName'];
+    $projectDesc = $_POST['projectDesc'];
+    $projectDeadline = date("Y-m-d",strtotime($_POST['projectDeadline']));
+    $status = true;
+    $stmt->execute();
+    echo '<meta http-equiv="refresh" content="1">';
     }
-    if(is_null($checkUser)){
-        echo "<script>alert(User does not exist);</script>";
-    }
+    echo '<div class="spacer">
+    <body>
+    <div class="tableContainer">
+    <table class="MainTable" align="center">
+        <tr class="TitleRow">
+            <th class="TitleColumn">User</th>
+            <th class="TitleColumn">Project</th>
+            <th class="TitleColumn">Description</th>
+            <th class="TitleColumn">Deadline</th>
+            <form method="post" action="projectsEdit.php">
+            <th class="TitleColumn">Edit</th>
+        </tr>';
+    if(!is_null($res)){
+                //echoa hverja röð fyrir sig
+        foreach($res as $row){
+            echo '<tr class="ContentRow">
+                    <td class="ContentColumn">' . $userName . '</td>
+                    <td class="ContentColumn">' . $row['projectName'] . '</td>
+                    <td class="ContentColumn">' . $row['projectDescription'] . '</td>
+                    <td class="ContentColumn">' . $row['projectDeadline'] . '</td>
+                    <td class="ContentColumn"><button type="submit" title="Edit" name="data[]" value="' . $row['id'] . '">Edit</button></td>
+                  </tr>';
+        }
+        echo "</form>";
+    }//enda if
+    
     else{
-        if(password_verify($userpass, $hash)){
-        echo "Yesss";
-            session_start();
-            $_SESSION['userName']=$user;
-            $Connection=null;
-        echo '<meta http-equiv="refresh" content="0; url=success.php" />';
-                           exit();
+        echo "No projects found";
     }
-    else{
-        echo '<script>alert("Incorrect Password");</script>';
-    }
-    }
-}//isset
-?>
+    echo '<tr class"ContentRow">
+            <td class="ContentColumn"></td>
+            <form method="post">
+                <td class="ContentColumn"><input type="text" name="projectName" placeholder="Project Name" class="projectName"></td>
+                <td class="ContentColumn"><textarea name="projectDesc" placeholder="Project Description" class="projectDesc"></textarea></td>
+                <td class="ContentColumn"><input type="date" name="projectDeadline" class="deadLine"></td>
+                <td class="ContentColumn"><input type="submit" name="add" value="Add Project" class="projectAdd"></td>
+            </form>
+        </tr>';
+    echo "</table>
+    </div></body>";
+       
+       
+       
+       
+       
+    $projectName = null;
+    $projectDesc = null;
+    $projectDeadline = null;
+    $DBconnect = null;
+    
+    
+    
+    
+    ?>
+<?php require_once("includes/footer.php");?>
+<?php require_once("includes/footer.php");?>
