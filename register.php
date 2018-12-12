@@ -1,7 +1,7 @@
 <html>
 <?php require_once('include/head.php'); ?>
   <body>
-
+<?php require_once('include/header.php'); ?>
     <div class="container">
 
       <form class="form-signin" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
@@ -15,7 +15,7 @@
         <div class="checkbox">
             <label>
                 Already have an account? 
-          <a href="index.php" class="link">Login here</a>
+          <a href="login.php" class="link">Login here</a>
             </label>
         </div>
         <button class="btn btn-lg btn-primary btn-block" type="submit" name="register">Register</button>
@@ -34,16 +34,20 @@
 if(isset($_POST['register'])){
 require_once("include/dbConn.php");
     $DBconnect=DBconnectUsers('write');
+
     $userpass = $_POST['inputPassword'];
     
         $hash = password_hash($userpass, PASSWORD_DEFAULT);
+
         $stmt = $DBconnect->prepare("INSERT INTO users (user, userPass) 
         VALUES(:user, :userpass)");
         $stmt->bindParam(':user', $user);
         $stmt->bindParam(':userpass', $hash);
+
         $user = $_POST['userName'];
         $hash;
+
         $stmt->execute();
-        header("Location: index.php");
+        header("Location: login.php");
 }//isset
 ?>

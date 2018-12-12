@@ -39,10 +39,51 @@ body {
   border-top-right-radius: 0;
 }
 
-
+body{
+    margin: 0;
+    padding: 0;
+}
 .username{
     margin: 0 auto;
     width: 650px;
     font-size: 10em;
     text-align: center;
+}
+.buttonSignout {
+    width: 80px;
+    margin 0 auto;
+}
+
+.articleContainer{
+    width: 800px;
+    margin: 0 auto;
+}
+
+.article{
+    padding: 10px;
+    width: 400px;
+    border: 1px solid black;
+    float: left;
+    display: inline-block;
+    min-height: 300px;
+}
+
+.articleTitle{
+    margin-bottom: 2px;
+    text-align: center;
+}
+
+.author{
+    font-family: cursive;
+    margin-left: 2px;
+}
+
+.date{
+    float: right;
+    margin-right: 2px;
+}
+
+.content{
+    margin-left: 5px;
+    margin-right: 5px;
 }
